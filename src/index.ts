@@ -88,15 +88,7 @@ async function main() {
 
   console.log('Wallet address being: ' + wallet.getAddress())
 
-  const ordersStorage = new OrdersStorage([{
-    fromAsset: AssetRuneNative,
-    toAsset: assetFromString('BNB/BUSD-BD1') ?? undefined,
-    toAddress: wallet.getAddress(),
-    input: 50,
-    price: "1.43",
-    maxSlip: "0.01",
-    done: false
-  }])
+  const ordersStorage = new OrdersStorage([])
 
   interval(ordersStorage)
 }
