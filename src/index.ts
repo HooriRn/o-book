@@ -11,7 +11,7 @@ import { Order, OrdersStorage } from './orders';
 import BigNumber, { BigNumber as bn } from 'bignumber.js'
 
 const query = new ThorchainQuery()
-const wallet = new thorchainClient({phrase: process.env.PHRASE})
+const wallet = new thorchainClient({ phrase: process.env.PHRASE })
 
 async function doSwap(order: Order): Promise<string | undefined> {
   const txDetails = await query.estimateSwap({
@@ -20,7 +20,7 @@ async function doSwap(order: Order): Promise<string | undefined> {
     destinationAsset: order.toAsset,
     slipLimit: new bn(order.maxSlip)
   })
-  
+
   if (txDetails.txEstimate.canSwap) {
     console.log('Swapping now with the est output :', txDetails.txEstimate.netOutput.assetAmountFixedString())
     const txID = await wallet.deposit({
@@ -60,7 +60,7 @@ async function interval(ordersStorage: OrdersStorage) {
           return
         }
 
-        const poolPrice = await getPoolPrice(order, pools) 
+        const poolPrice = await getPoolPrice(order, pools)
 
         if (poolPrice.gte(order.price)) {
           console.log('there is vaild order book Doing SWAP. ' + (new Date()).toLocaleString(), '\n Price: ', poolPrice.toFixed(2).toString())
@@ -74,7 +74,7 @@ async function interval(ordersStorage: OrdersStorage) {
         }
 
       });
-    }, 10000) 
+    }, 10000)
   } catch (error: any) {
     console.error(error.stack)
   }
@@ -83,7 +83,7 @@ async function interval(ordersStorage: OrdersStorage) {
 async function main() {
   console.log('start of the script...')
 
-  console.log(wallet.getAddress())
+  console.log('wallet address being: ', wallet.getAddress())
 
   const ordersStorage = new OrdersStorage([{
     fromAsset: AssetRuneNative,
