@@ -1,11 +1,14 @@
-import { Asset } from "@xchainjs/xchain-util"
+import { CryptoAmount } from "@xchainjs/xchain-thorchain-query"
+import { Asset, BaseAmount } from "@xchainjs/xchain-util"
 
 export type Order = {
   fromAsset: Asset,
-  toAsset: Asset,
+  toAsset: Asset | undefined,
   toAddress: string,
   input: number,
-  price: string
+  price: string,
+  maxSlip: string,
+  done: boolean
 }
 
 export class OrdersStorage {
