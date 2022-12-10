@@ -20,12 +20,9 @@ async function doSwap(order: Order): Promise<string | undefined> {
     destinationAsset: order.toAsset,
     slipLimit: new bn(order.maxSlip)
   })
-
-  console.log(txDetails)
-  console.log(txDetails.txEstimate.canSwap)
-  console.log(txDetails.txEstimate.netOutput.assetAmountFixedString())
   
   if (txDetails.txEstimate.canSwap) {
+    console.log('Swapping now with the est output :', txDetails.txEstimate.netOutput.assetAmountFixedString())
     const txID = await wallet.deposit({
       asset: order.fromAsset,
       amount: assetToBase(assetAmount(order.input, 8)),
