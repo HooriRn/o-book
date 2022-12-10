@@ -16,7 +16,7 @@ const wallet = new thorchainClient({ phrase: process.env.PHRASE })
 async function doSwap(order: Order): Promise<string | undefined> {
   const txDetails = await query.estimateSwap({
     input: new CryptoAmount(assetToBase(assetAmount(order.input, 8)), order.fromAsset),
-    destinationAddress: order.toAddress,
+    destinationAddress: wallet.getAddress(),
     destinationAsset: order.toAsset,
     slipLimit: new bn(order.maxSlip)
   })
