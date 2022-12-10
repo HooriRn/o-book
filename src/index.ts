@@ -9,6 +9,7 @@ dotenv.config()
 
 import { Order, OrdersStorage } from './orders';
 import BigNumber, { BigNumber as bn } from 'bignumber.js'
+import { orders } from '../orders';
 
 const query = new ThorchainQuery()
 const wallet = new thorchainClient({ phrase: process.env.PHRASE })
@@ -88,7 +89,7 @@ async function main() {
 
   console.log('Wallet address being: ' + wallet.getAddress())
 
-  const ordersStorage = new OrdersStorage([])
+  const ordersStorage = new OrdersStorage(orders)
 
   interval(ordersStorage)
 }
