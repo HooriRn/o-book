@@ -22,7 +22,8 @@ async function doSwap(order: Order): Promise<string | undefined> {
   })
 
   if (txDetails.txEstimate.canSwap) {
-    console.log('Swapping now with the est output :', txDetails.txEstimate.netOutput.assetAmountFixedString())
+    console.log('Swapping now with the output fee:', txDetails.txEstimate.totalFees.outboundFee.assetAmountFixedString())
+    console.log('Swapping now with the est output:', txDetails.txEstimate.netOutput.assetAmountFixedString())
     const txID = await wallet.deposit({
       asset: order.fromAsset,
       amount: assetToBase(assetAmount(order.input, 8)),
@@ -39,7 +40,7 @@ async function getPoolPrice(order: Order, pools: Record<string, LiquidityPool>):
   let poolPrice = bnOrZero(0)
   if (assetToString(order.fromAsset) == assetToString(AssetRuneNative)) {
     poolPrice = (bnOrZero(pools['BNB.BUSD'].pool.assetPrice)).pow(-1)
-    console.log('RUNE price is: ', poolPrice.toString())
+    console.log('RUNE price is: ', poolPrice.toFixed(2).toString())
     return poolPrice
   } else {
     let poolDetail = await query.thorchainCache.getPoolForAsset(order.fromAsset)
@@ -54,16 +55,18 @@ async function interval(ordersStorage: OrdersStorage) {
     setInterval(async () => {
       const pools = await query.thorchainCache.getPools()
       ordersStorage?.orders.forEach(async (order: Order, index: number) => {
-
         if (order.done == true) {
+          console.log(`Deleting order ${index} for ${assetToString(order.fromAsset)} to ${assetToString(order.toAsset)} at price:`, order.price)
           ordersStorage.deleteOrder(index)
           return
         }
+        
+        console.log(`Checking order ${index} for ${assetToString(order.fromAsset)} to ${assetToString(order.toAsset)} at price:`, order.price)
 
         const poolPrice = await getPoolPrice(order, pools)
 
         if (poolPrice.gte(order.price)) {
-          console.log('there is vaild order book Doing SWAP. ' + (new Date()).toLocaleString(), '\n Price: ', poolPrice.toFixed(2).toString())
+          console.log('there is vaild order book Doing SWAP. ' + (new Date()).toLocaleString(), '\nPrice: ', poolPrice.toFixed(2).toString())
           const txID = await doSwap(order)
           if (txID) {
             console.log('Tx is done with this txID: ' + txID)
@@ -83,14 +86,14 @@ async function interval(ordersStorage: OrdersStorage) {
 async function main() {
   console.log('start of the script...')
 
-  console.log('wallet address being: ', wallet.getAddress())
+  console.log('Wallet address being: ' + wallet.getAddress())
 
   const ordersStorage = new OrdersStorage([{
     fromAsset: AssetRuneNative,
     toAsset: assetFromString('BNB/BUSD-BD1') ?? undefined,
     toAddress: wallet.getAddress(),
-    input: 1,
-    price: "1.39",
+    input: 50,
+    price: "1.43",
     maxSlip: "0.01",
     done: false
   }])
