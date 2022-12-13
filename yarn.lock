@@ -2465,6 +2465,11 @@ semver@^6.1.1, semver@^6.1.2, semver@^6.3.0:
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.0.tgz#ee0a64c8af5e8ceea67687b133761e1becbd1d3d"
   integrity sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==
 
+set-interval-async@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/set-interval-async/-/set-interval-async-3.0.2.tgz#337a26553d1eba4d7b3fd4ae8a44a405cecf0eb1"
+  integrity sha512-s8Jl35TVylbhgeYbTJ3y3h/KnBCGvDPHyuG02My82YNwgKRErpmvNsWWec5zpt4jqTKPZyRmgCEkeFb07+j7EA==
+
 sha.js@^2.4.0, sha.js@^2.4.8:
   version "2.4.11"
   resolved "https://registry.yarnpkg.com/sha.js/-/sha.js-2.4.11.tgz#37a5cf0b81ecbc6943de109ba2960d1b26584ae7"

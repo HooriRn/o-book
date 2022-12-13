@@ -14,6 +14,9 @@ import { orders } from '../orders';
 const query = new ThorchainQuery()
 const wallet = new thorchainClient({ phrase: process.env.PHRASE })
 
+//custom interval from: https://www.npmjs.com/package/set-interval-async
+import { setIntervalAsync, clearIntervalAsync } from 'set-interval-async/dynamic';
+
 async function doSwap(order: Order): Promise<string | undefined> {
   const txDetails = await query.estimateSwap({
     input: new CryptoAmount(assetToBase(assetAmount(order.input, 8)), order.fromAsset),
@@ -41,7 +44,7 @@ async function getPoolPrice(order: Order, pools: Record<string, LiquidityPool>):
   let poolPrice = bnOrZero(0)
   if (assetToString(order.fromAsset) == assetToString(AssetRuneNative)) {
     poolPrice = (bnOrZero(pools['BNB.BUSD'].pool.assetPrice)).pow(-1)
-    console.log('RUNE price is: ', poolPrice.toFixed(2).toString())
+    console.log('RUNE price is: ', poolPrice.toFixed(4).toString())
     return poolPrice
   } else {
     let poolDetail = await query.thorchainCache.getPoolForAsset(order.fromAsset)
@@ -53,16 +56,16 @@ async function getPoolPrice(order: Order, pools: Record<string, LiquidityPool>):
 
 async function interval(ordersStorage: OrdersStorage) {
   try {
-    setInterval(async () => {
+    setIntervalAsync(async () => {
       const pools = await query.thorchainCache.getPools()
       ordersStorage?.orders.forEach(async (order: Order, index: number) => {
         if (order.done == true) {
-          console.log(`Deleting order ${index} for ${assetToString(order.fromAsset)} to ${assetToString(order.toAsset)} at price:`, order.price)
+          console.log(`Deleting order ${index} for ${order.input} ${assetToString(order.fromAsset)} to ${assetToString(order.toAsset)} at price:`, order.price)
           ordersStorage.deleteOrder(index)
           return
         }
         
-        console.log(`Checking order ${index} for ${assetToString(order.fromAsset)} to ${assetToString(order.toAsset)} at price:`, order.price)
+        console.log(`Checking order ${index} for ${order.input} ${assetToString(order.fromAsset)} to ${assetToString(order.toAsset)} at price:`, order.price)
 
         const poolPrice = await getPoolPrice(order, pools)
 
