@@ -5,8 +5,10 @@ export type Order = {
   fromAsset: Asset,
   toAsset: Asset | undefined,
   input: number,
-  price: string,
+  price?: string,
+  toPrice?: string,
   maxSlip: string,
+  inverse: boolean,
   done: boolean
 }
 
