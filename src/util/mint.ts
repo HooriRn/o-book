@@ -1,6 +1,6 @@
 // xchainjs
 import { Asset, assetAmount, assetFromString, assetToBase, assetToString, baseToAsset } from '@xchainjs/xchain-util';
-import { AssetRuneNative, Client as thorchainClient } from '@xchainjs/xchain-thorchain';
+import { Client, Client as thorchainClient } from '@xchainjs/xchain-thorchain';
 import { CryptoAmount, ThorchainQuery } from '@xchainjs/xchain-thorchain-query';
 
 // dot env config
@@ -8,9 +8,10 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 import { BigNumber as bn } from 'bignumber.js'
+import { readKeystore } from './util';
 
 const query = new ThorchainQuery()
-const wallet = new thorchainClient({ phrase: process.env.PHRASE })
+var wallet: Client
 
 async function doMint(fromAsset: Asset, toAsset: Asset, toAddress: string, value: number): Promise<string | undefined> {
   const txDetails = await query.estimateSwap({
@@ -37,6 +38,9 @@ async function doMint(fromAsset: Asset, toAsset: Asset, toAddress: string, value
 }
 
 async function main() {
+  const phrase = await readKeystore(process.env.KeystoreFile)
+  wallet = new thorchainClient({phrase})
+
   const balances = (await wallet.getBalance(wallet.getAddress())).map(a => ({asset: assetToString(a.asset), input: baseToAsset(a.amount).amount().toString()}))
   const toMintAsset = assetFromString('BNB.BUSD-BD1') ?? undefined 
 
