@@ -7,6 +7,7 @@ export type Order = {
   input: number,
   price?: string,
   toPrice?: string,
+  decimals?: number,
   maxSlip: string,
   inverse: boolean,
   done: boolean
